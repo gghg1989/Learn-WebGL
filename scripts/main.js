@@ -24,4 +24,6 @@ function initGL(canvas) {
 	gl.viewportWidth = canvas.width;
 	gl.viewportHeight = canvas.height;
 
+	// Something new
+
 }
