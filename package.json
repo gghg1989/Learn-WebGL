@@ -1,0 +1,19 @@
+{
+  "name": "learn-webgl",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gghg1989/Learn-WebGL.git"
+  },
+  "author": "Yuzhou Feng",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gghg1989/Learn-WebGL/issues"
+  },
+  "homepage": "https://github.com/gghg1989/Learn-WebGL#readme"
+}
