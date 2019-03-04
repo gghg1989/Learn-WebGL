@@ -1,4 +1,5 @@
-# Learn-WebGL
+# FIU CAP-5701 Adv Computer Graphics Assignment 1
+Yuzhou Feng
 
 ## How to run the program
 
