@@ -51,6 +51,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js"></script>
     <script type="text/javascript">
     var translationTrigger = false;
+    var scaleRate = 1;
  
     function render(gl,scene,timestamp,previousTimestamp) {
  
@@ -74,14 +75,11 @@
       mat4.rotate(
         scene.object.modelMatrix, scene.object.modelMatrix, delta,
         [rotateX, rotateY, rotateZ]);
-      
-      var scaleX = $('#scale-x').val();
-      var scaleY = $('#scale-y').val();
-      var scaleZ = $('#scale-z').val();
 
       mat4.scale(
         scene.object.modelMatrix, scene.object.modelMatrix,
-        [scaleX, scaleY, scaleZ]);
+        [scaleRate, scaleRate, scaleRate]);
+      scaleRate = 1;
 
       if (translationTrigger) {
         var translationX = 0.01;
@@ -338,10 +336,19 @@
     function reloadPage() {
       window.location.reload(true);
     }
+
+    function scaleUp() {
+      scaleRate = 1.1;
+    } 
+
+    function scaleDown() {
+      scaleRate = 0.9;
+    }
  
     </script>
   </head>
   <body>
+    <h1>FIU CAP-5701 Adv Computer Graphics Assignment 1</h1>
     <ul class="nav nav-tabs">
       <li class="nav-item">
         <a class="nav-link active" href="Transformations.html">Transformations and Lighting</a>
@@ -380,27 +387,17 @@
           <input type="range" class="form-control-range" name="rotate-z" id="rotate-z" min="0" max="10" value="5">
         </span>
       </div>
-      <div class="input-group mb-3">
-        <label for="scale-x">Scale X</label>
-        <span>
-          <input type="range" name="scale-x" id="scale-x" min="1" max="5" value="1">
-        </span>
-        <label for="scale-y">Scale Y</label>
-        <span>
-          <input type="range" name="scale-y" id="scale-y" min="1" max="5" value="1">
-        </span>
-        <label for="scale-z">Scale Z</label>
-        <span>
-          <input type="range" name="scale-z" id="scale-z" min="1" max="5" value="1">
-        </span>
+      <div class="mb-3">
+        <label>Scale</label>
+        <button type="button" class="btn btn-primary" onclick="scaleUp()">Increase Size</button>
+        <button type="button" class="btn btn-warning" onclick="scaleDown()">Decrease Size</button>
       </div>
-      <div>
+      <div class="mb-3">
         <button type="button" class="btn btn-primary" onclick="startMove()">Traslate</button>
         <button type="button" class="btn btn-warning" onclick="reloadPage()">Reset</button>
       </div>
     </form>
     <footer class="pt-4 my-md-5 pt-md-5 border-top">
-        <b> FIU CAP-5701 Adv Computer Graphics Assignment 1 </b>
         Yuzhou Feng
     </footer>
   </body>
