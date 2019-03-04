@@ -1,15 +1,24 @@
-var canvas = document.getElementById('canvas');
-initGL(canvas);
 
+var gl;
+
+// Program Entry Point
+function main() {
+	// Obtain canvas reference
+	var canvas = document.getElementById('canvas');
+	// Obtain WebGL context
+	initGL(canvas);
+}
+
+// Obtain WebGL context - START
 function initGL(canvas) {
 	// Context names try list
 	var ctxNames = ["webgl", "experimental-webgl", "webkit3d", "moz-webgl"];
 	// Try to obtain WebGL context
-	for (var i = ctxNames.length - 1; i >= 0; i--) {
+	for (var i = 0; i < ctxNames.length; i++) {
 		try {
 			gl = canvas.getContext(ctxNames[i]);
 		}
-		catch(e) {}
+		catch(e) { }
 		// If found context, exit loop
 		if(gl) {
 			break;
@@ -23,7 +32,10 @@ function initGL(canvas) {
 	// Set viewport size by canvas size
 	gl.viewportWidth = canvas.width;
 	gl.viewportHeight = canvas.height;
+}
+// Obtain WebGL context - END
 
-	// Something new
-
+// Initialize shaders
+function initShaders() {
+	
 }

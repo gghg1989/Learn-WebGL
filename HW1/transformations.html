@@ -1,53 +1,56 @@
 <!doctype html>
 <html>
   <head>
-    <title>Hacking WebGL</title>
+    <title>Transformations and Lighting</title>
     <script type="x-shader/x-vertex" id="vertex-shader">
-    precision mediump float;
- 
-    attribute vec3 pos;
-    attribute vec3 normal;
- 
-    varying vec3 col;
- 
-    uniform mat4 projectionMatrix, viewMatrix, modelMatrix;
-    uniform mat3 normalMatrix;
- 
-    uniform vec3 ambientLightColour, directionalLight, materialSpecular;
-    uniform float materialAmbient, materialDiffuse, shininess;
- 
-    /* A function to determine the colour of a vertex, accounting
-       for ambient and directional light */
-    vec3 ads( vec4 position, vec3 norm )
-    {
-      vec3 s = normalize(vec3(vec4(directionalLight,1.0) - position));
-      vec3 v = normalize(vec3(-position));
-      vec3 r = reflect(-s, norm);
-      return ambientLightColour +
-        materialDiffuse * max(dot(s,norm), 0.0) +
-        materialSpecular * pow(max(dot(r,v), 0.0), shininess);
-    }
- 
-    void main() {
-      vec3 eyeNormal = normalize(normalMatrix * normal);
-      vec4 eyePosition =  viewMatrix * modelMatrix * vec4(pos, 1.0);
-      col = min(vec3(0.0) + ads(eyePosition, eyeNormal), 1.0);
-      gl_Position = projectionMatrix * viewMatrix * modelMatrix *
-        vec4(pos, 1.0); 
-    }
+      precision mediump float;
+   
+      attribute vec3 pos;
+      attribute vec3 normal;
+   
+      varying vec3 col;
+   
+      uniform mat4 projectionMatrix, viewMatrix, modelMatrix;
+      uniform mat3 normalMatrix;
+   
+      uniform vec3 ambientLightColour, directionalLight, materialSpecular;
+      uniform float materialAmbient, materialDiffuse, shininess;
+   
+      /* A function to determine the colour of a vertex, accounting
+         for ambient and directional light */
+      vec3 ads( vec4 position, vec3 norm )
+      {
+        vec3 s = normalize(vec3(vec4(directionalLight,1.0) - position));
+        vec3 v = normalize(vec3(-position));
+        vec3 r = reflect(-s, norm);
+        return ambientLightColour +
+          materialDiffuse * max(dot(s,norm), 0.0) +
+          materialSpecular * pow(max(dot(r,v), 0.0), shininess);
+      }
+   
+      void main() {
+        vec3 eyeNormal = normalize(normalMatrix * normal);
+        vec4 eyePosition =  viewMatrix * modelMatrix * vec4(pos, 1.0);
+        col = min(vec3(0.0) + ads(eyePosition, eyeNormal), 1.0);
+        gl_Position = projectionMatrix * viewMatrix * modelMatrix *
+          vec4(pos, 1.0); 
+      }
     </script>
+    
     <script type="x-shader/x-fragment" id="fragment-shader">
-    precision mediump float;
- 
-    varying vec3 col;
- 
-    void main() {
-      gl_FragColor = vec4(col, 1.0);
-    }
+      precision mediump float;
+   
+      varying vec3 col;
+   
+      void main() {
+        gl_FragColor = vec4(col, 1.0);
+      }
     </script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js"></script>
     <script type="text/javascript">
+    var translationTrigger = false;
  
     function render(gl,scene,timestamp,previousTimestamp) {
  
@@ -62,14 +65,35 @@
         ($('#light-z').val() - 50.0) / 10.0);
  
       gl.uniform3fv(scene.program.directionalLightUniform, light);
- 
+      
+      // Rotate model
       var rotateX = ($('#rotate-x').val() - 5) / 10;
       var rotateY = ($('#rotate-y').val() - 5) / 10;
       var rotateZ = ($('#rotate-z').val() - 5) / 10;
- 
+
       mat4.rotate(
         scene.object.modelMatrix, scene.object.modelMatrix, delta,
         [rotateX, rotateY, rotateZ]);
+      
+      var scaleX = $('#scale-x').val();
+      var scaleY = $('#scale-y').val();
+      var scaleZ = $('#scale-z').val();
+
+      mat4.scale(
+        scene.object.modelMatrix, scene.object.modelMatrix,
+        [scaleX, scaleY, scaleZ]);
+
+      if (translationTrigger) {
+        var translationX = 0.01;
+        var translationY = 0.01;
+        var translationZ = 0.01;
+
+        mat4.translate(
+          scene.object.modelMatrix, scene.object.modelMatrix,
+          [translationX, translationY, translationZ]);
+      }
+
+
       gl.uniformMatrix4fv(
         scene.program.modelMatrixUniform, gl.FALSE,
         scene.object.modelMatrix);
@@ -85,6 +109,8 @@
         scene.program.normalMatrixUniform, gl.FALSE, normalMatrix);
  
       gl.bindBuffer(gl.ARRAY_BUFFER, scene.object.vertexBuffer);
+
+      // gl.drawArrays(Mode, Offset, Count) {}
       gl.drawArrays(gl.TRIANGLES, 0, scene.object.vertexCount);
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
  
@@ -125,7 +151,8 @@
       gl.enable(gl.CULL_FACE);
       gl.cullFace(gl.BACK);
       gl.clearColor(0.0, 0.0, 0.0, 0.0);
- 
+      
+      // Compile and link shaders - START
       var program = createProgram(
         gl,
         [{container: 'vertex-shader', type: gl.VERTEX_SHADER},
@@ -137,11 +164,13 @@
       gl.enableVertexAttribArray(program.positionAttribute);
       program.normalAttribute = gl.getAttribLocation(program, 'normal');
       gl.enableVertexAttribArray(program.normalAttribute);
- 
+      // Compile and link shaders - END
+      
       var vertexBuffer = gl.createBuffer();
  
       gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, object.vertices, gl.STATIC_DRAW);
+      // void gl.vertexAttribPointer(Index, Size, Type, Norm, Stride, Offset) {}
       gl.vertexAttribPointer(
         program.positionAttribute, 3, gl.FLOAT, gl.FALSE, 
         Float32Array.BYTES_PER_ELEMENT * 6, 0);
@@ -301,22 +330,78 @@
     $(document).ready(function() {
       loadMesh('monkey.obj')
     });
+
+    function startMove() {
+      translationTrigger = true;
+    }
+
+    function reloadPage() {
+      window.location.reload(true);
+    }
  
     </script>
   </head>
   <body>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" href="Transformations.html">Transformations and Lighting</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="texture.html">Texture</a>
+      </li>
+    </ul>
     <canvas id="rendering-surface" height="500" width="500"></canvas>
-    <form>
-      <div>
-        <label for="light-x">Light X<input type="range" name="light-x" id="light-x" min="0" max="100"></label>
-        <label for="light-y">Light Y<input type="range" name="light-y" id="light-y" min="0" max="100"></label>
-        <label for="light-z">Light Z<input type="range" name="light-z" id="light-z" min="0" max="100"></label>
+    <form style="margin-left: 20px">
+      <div class="input-group mb-3">
+        <label for="light-x">Light X</label>
+        <span>
+          <input type="range" name="light-x" id="light-x" min="0" max="100">
+        </span>
+        <label for="light-y">Light Y</label>
+        <span>
+          <input type="range" name="light-y" id="light-y" min="0" max="100">
+        </span>
+        <label for="light-z">Light Z</label>
+        <span>
+          <input type="range" name="light-z" id="light-z" min="0" max="100">
+        </span>
+      </div>
+      <div class="input-group mb-3">
+        <label for="rotate-x">Rotate X</label>
+        <span>
+          <input type="range" class="form-control-range" name="rotate-x" id="rotate-x" min="0" max="10" value="5">
+        </span>
+        <lable for="rotate-y">Rotate Y</lable>
+        <span>
+          <input type="range" class="form-control-range" name="rotate-y" id="rotate-y" min="0" max="10" value="5">
+        </span>
+        <label for="rotate-z">Rotate Z</label>
+        <span>
+          <input type="range" class="form-control-range" name="rotate-z" id="rotate-z" min="0" max="10" value="5">
+        </span>
+      </div>
+      <div class="input-group mb-3">
+        <label for="scale-x">Scale X</label>
+        <span>
+          <input type="range" name="scale-x" id="scale-x" min="1" max="5" value="1">
+        </span>
+        <label for="scale-y">Scale Y</label>
+        <span>
+          <input type="range" name="scale-y" id="scale-y" min="1" max="5" value="1">
+        </span>
+        <label for="scale-z">Scale Z</label>
+        <span>
+          <input type="range" name="scale-z" id="scale-z" min="1" max="5" value="1">
+        </span>
       </div>
       <div>
-        <label for="rotate-x">Rotate X<input type="range" name="rotate-x" id="rotate-x" min="0" max="10" value="5"></label>
-        <label for="rotate-y">Rotate Y<input type="range" name="rotate-y" id="rotate-y" min="0" max="10" value="5"></label>
-        <label for="rotate-z">Rotate Z<input type="range" name="rotate-z" id="rotate-z" min="0" max="10" value="5"></label>
+        <button type="button" class="btn btn-primary" onclick="startMove()">Traslate</button>
+        <button type="button" class="btn btn-warning" onclick="reloadPage()">Reset</button>
       </div>
     </form>
+    <footer class="pt-4 my-md-5 pt-md-5 border-top">
+        <b> FIU CAP-5701 Adv Computer Graphics Assignment 1 </b>
+        Yuzhou Feng
+    </footer>
   </body>
 </html>
