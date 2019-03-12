@@ -1,3 +1,5 @@
+// var modelSrc = "tetrahedron.obj";
+var modelSrc = "donut.obj";
 var translationTrigger = false;
 var scaleRate = 1;
 
@@ -275,7 +277,7 @@ function loadMesh(filename) {
 }
 
 $(document).ready(function() {
-  loadMesh('tetrahedron.obj')
+  loadMesh(modelSrc)
 });
 
 function startMove() {
@@ -300,6 +302,8 @@ function caculate(string) {
 	var normals = [];
 	var vertices = [];
 	var edges = [];
+	var hedges = [];
+	var v = e = f = X = 0;
 	for ( var i = 0 ; i < lines.length ; i++ ) {
     	var parts = lines[i].trimRight().split(' ');
     	if ( parts.length > 0 ) {
@@ -319,6 +323,7 @@ function caculate(string) {
 		        	  	parseFloat(parts[3])));
 		        	break;
 		        case 'f': {
+		        	f++;
 	        		var f1 = parts[1].split('/');
 	        		var f2 = parts[2].split('/');
 	        		var f3 = parts[3].split('/');
@@ -326,19 +331,21 @@ function caculate(string) {
 	        		
 	        		tempEdge.push(parseInt(f1[0]));
 	        		tempEdge.push(parseInt(f2[0]));
-	        		edges.push(tempEdge);
+	        		hedges.push(tempEdge);
 	        		
 	        		tempEdge = [];
 	        		tempEdge.push(parseInt(f2[0]));
 	        		tempEdge.push(parseInt(f3[0]));
-	        		edges.push(tempEdge);
+	        		hedges.push(tempEdge);
 	        		
 	        		tempEdge = [];
 	        		tempEdge.push(parseInt(f3[0]));
 	        		tempEdge.push(parseInt(f1[0]));
-	        		edges.push(tempEdge);
+	        		hedges.push(tempEdge);
 
-	        		
+	        		// edges = remove_duplicates(hedges);
+
+
 	        		// Array.prototype.push.apply(
 	        		//   vertices, positions[parseInt(f1[0]) - 1]);
 	        		// Array.prototype.push.apply(
@@ -350,5 +357,17 @@ function caculate(string) {
       		}
     	}
   	}
-  	console.log(edges);
+  	v = positions.length;
+  	e = hedges.length / 2;
+  	var g = 0;
+	console.log("v=" + v);
+	console.log("e=" + e);
+	console.log("f=" + f);
+	console.log("X=v+f-e=" + (v+f-e));
+	console.log("2-2g=" + (2 - 2 * g));
+  	console.log(hedges);
+}
+
+function loadModel(modelName) {
+	loadMesh(modelName+".obj");
 }
