@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Transformations and Lighting</title>
+    <script type="x-shader/x-vertex" id="vertex-shader">
+      precision mediump float;
+   
+      attribute vec3 pos;
+      attribute vec3 normal;
+   
+      varying vec3 col;
+   
+      uniform mat4 projectionMatrix, viewMatrix, modelMatrix;
+      uniform mat3 normalMatrix;
+   
+      uniform vec3 ambientLightColour, directionalLight, materialSpecular;
+      uniform float materialAmbient, materialDiffuse, shininess;
+   
+      /* A function to determine the colour of a vertex, accounting
+         for ambient and directional light */
+      vec3 ads( vec4 position, vec3 norm )
+      {
+        vec3 s = normalize(vec3(vec4(directionalLight,1.0) - position));
+        vec3 v = normalize(vec3(-position));
+        vec3 r = reflect(-s, norm);
+        return ambientLightColour +
+          materialDiffuse * max(dot(s,norm), 0.0) +
+          materialSpecular * pow(max(dot(r,v), 0.0), shininess);
+      }
+   
+      void main() {
+        vec3 eyeNormal = normalize(normalMatrix * normal);
+        vec4 eyePosition =  viewMatrix * modelMatrix * vec4(pos, 1.0);
+        col = min(vec3(0.0) + ads(eyePosition, eyeNormal), 1.0);
+        gl_Position = projectionMatrix * viewMatrix * modelMatrix *
+          vec4(pos, 1.0); 
+      }
+    </script>
+    
+    <script type="x-shader/x-fragment" id="fragment-shader">
+      precision mediump float;
+   
+      varying vec3 col;
+   
+      void main() {
+        gl_FragColor = vec4(col, 1.0);
+      }
+    </script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js"></script>
+    
+  </head>
+  <body>
+    <h1>FIU CAP-5701 Adv Computer Graphics Assignment 1</h1>
+    <h2>Triangular Mesh Euler number</h2>
+    <canvas id="rendering-surface" height="500" width="500"></canvas>
+    <form style="margin-left: 20px">
+      <div class="input-group mb-3">
+        <label for="light-x">Light X</label>
+        <span>
+          <input type="range" name="light-x" id="light-x" min="0" max="100">
+        </span>
+        <label for="light-y">Light Y</label>
+        <span>
+          <input type="range" name="light-y" id="light-y" min="0" max="100">
+        </span>
+        <label for="light-z">Light Z</label>
+        <span>
+          <input type="range" name="light-z" id="light-z" min="0" max="100">
+        </span>
+      </div>
+      <div class="input-group mb-3">
+        <label for="rotate-x">Rotate X</label>
+        <span>
+          <input type="range" class="form-control-range" name="rotate-x" id="rotate-x" min="0" max="10" value="5">
+        </span>
+        <lable for="rotate-y">Rotate Y</lable>
+        <span>
+          <input type="range" class="form-control-range" name="rotate-y" id="rotate-y" min="0" max="10" value="5">
+        </span>
+        <label for="rotate-z">Rotate Z</label>
+        <span>
+          <input type="range" class="form-control-range" name="rotate-z" id="rotate-z" min="0" max="10" value="5">
+        </span>
+      </div>
+      <div class="mb-3">
+        <label>Scale</label>
+        <button type="button" class="btn btn-primary" onclick="scaleUp()">Increase Size</button>
+        <button type="button" class="btn btn-warning" onclick="scaleDown()">Decrease Size</button>
+      </div>
+      <div class="mb-3">
+        <button type="button" class="btn btn-primary" onclick="startMove()">Traslate</button>
+        <button type="button" class="btn btn-warning" onclick="reloadPage()">Reset</button>
+      </div>
+    </form>
+    <footer class="pt-4 my-md-5 pt-md-5 border-top">
+        Yuzhou Feng
+    </footer>
+
+    <script type="text/javascript" src="HalfEdge.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+  </body>
+</html>
