@@ -2,6 +2,7 @@
 var modelSrc = "donut.obj";
 var translationTrigger = false;
 var scaleRate = 1;
+var genus = 0;
 
 function render(gl,scene,timestamp,previousTimestamp) {
 
@@ -277,7 +278,7 @@ function loadMesh(filename) {
 }
 
 $(document).ready(function() {
-  loadMesh(modelSrc)
+  loadModel('bunny', 0);
 });
 
 function startMove() {
@@ -359,15 +360,17 @@ function caculate(string) {
   	}
   	v = positions.length;
   	e = hedges.length / 2;
-  	var g = 0;
-	console.log("v=" + v);
-	console.log("e=" + e);
-	console.log("f=" + f);
-	console.log("X=v+f-e=" + (v+f-e));
-	console.log("2-2g=" + (2 - 2 * g));
+  	var g = genus;
+	$('#v').html(v);
+	$('#e').html(e);
+	$('#f').html(f);
+	$('#X').html(v+f-e);
+	$('#g').html(g);
+	$('#EN').html(2 - 2 * g);
   	console.log(hedges);
 }
 
-function loadModel(modelName) {
+function loadModel(modelName, modelGenus) {
 	loadMesh(modelName+".obj");
+	genus = modelGenus;
 }

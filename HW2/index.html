@@ -57,17 +57,50 @@
     </style>
   </head>
   <body>
-    <h1>FIU CAP-5701 Adv Computer Graphics Assignment 1</h1>
-    <h2>Triangular Mesh Euler number</h2>
+    <h2>FIU CAP-5701 Adv Computer Graphics Assignment 2</h2>
+
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <button class="nav-link active" onclick="loadModel('bunny', 0)">
+            Bunny 
+            <span class="badge badge-default">genus 0</span>
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" onclick="loadModel('donut', 1)">
+            Donut 
+            <span class="badge badge-default">genus 1</span>
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" onclick="loadModel('eight', 2)">
+            Eight 
+            <span class="badge badge-default">genus 2</span>
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" onclick="loadModel('topology', 13)">
+            Topology 
+            <span class="badge badge-default">genus 13</span>
+        </button>
+      </li>
+    </ul>
+
     <div style="overflow: hidden">
       <div class="test">
         <canvas id="rendering-surface" height="500" width="500"></canvas>
       </div>
       <div class="test">
         <div>
-          <button type="button" class="btn btn-primary" onclick="loadModel('bunny')">Rabbit</button>
+          <label>genus=</label><span id="g"></span> | 
+          <label>X=2-2g=</label><span id="EN"></span>
         </div>
-        <label>v=</label><span id="v"></span>
+        <div>
+          <label>v=</label><span id="v"></span> | 
+          <label>e=</label><span id="e"></span> |
+          <label>f=</label><span id="f"></span> |
+          <label>X=v+f-e=</label><span id="X"></span>
+        </div>
         <form style="margin-left: 20px">
           <div class="input-group mb-3">
             <label for="light-x">Light X</label>
@@ -96,15 +129,6 @@
             <span>
               <input type="range" class="form-control-range" name="rotate-z" id="rotate-z" min="0" max="10" value="5">
             </span>
-          </div>
-          <div class="mb-3">
-            <label>Scale</label>
-            <button type="button" class="btn btn-primary" onclick="scaleUp()">Increase Size</button>
-            <button type="button" class="btn btn-warning" onclick="scaleDown()">Decrease Size</button>
-          </div>
-          <div class="mb-3">
-            <button type="button" class="btn btn-primary" onclick="startMove()">Traslate</button>
-            <button type="button" class="btn btn-warning" onclick="reloadPage()">Reset</button>
           </div>
         </form>
       </div>
