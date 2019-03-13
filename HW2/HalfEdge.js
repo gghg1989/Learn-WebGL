@@ -53,3 +53,60 @@ HalfEdge.prototype.onBoundary = function() {
   }
   return true;
 };
+
+HalfEdge.prototype.getAllHe = function() {
+  var hes = [this];
+  var currentHe = this;
+  while(true) {
+    var he1stNext = currentHe.getNextHalfEdge();
+    var he2ndNext = he1stNext.getNextHalfEdge();
+    var he = he2ndNext.getFlipHalfEdge();
+    if (he.edge[0] == this.edge[0] && he.edge[1] == this.edge[1]) {
+      break;
+    }
+    hes.push(he);
+    currentHe = he;
+  }
+  return hes;
+}
+
+HalfEdge.prototype.getVector = function() {
+  var nextHe = this.getNextHalfEdge();
+  var nextV = nextHe.getVertex();
+  var thisV = this.getVertex();
+  var thisVector = vec3.fromValues(
+    nextV[0] - thisV[0],
+    nextV[1] - thisV[1],
+    nextV[2] - thisV[2]);
+  return thisVector;
+}
+
+HalfEdge.prototype.getLength = function() {
+  return vec3.length(this.getVector());
+}
+
+HalfEdge.prototype.getAngle = function() {
+  var he1stNext = this.getNextHalfEdge();
+  var he2ndNext = he1stNext.getNextHalfEdge();
+  var he = he2ndNext.getFlipHalfEdge();
+  return vec3.angle(this.getVector(), he.getVector());
+
+}
+
+HalfEdge.prototype.getGaussianCurvature = function() {
+  var sum = this.getAngle();
+  var currentHe = this;
+  while(true) {
+    var he1stNext = currentHe.getNextHalfEdge();
+    var he2ndNext = he1stNext.getNextHalfEdge();
+    var he = he2ndNext.getFlipHalfEdge();
+    if (he.edge[0] == this.edge[0] && he.edge[1] == this.edge[1]) {
+      break;
+    }
+    sum += he.getAngle();
+    currentHe = he;
+  }
+  return 2 * Math.PI - sum;
+}
+
+

@@ -1,7 +1,8 @@
 var translationTrigger = false;
 var scaleRate = 1;
 var genus = 0;
-var currentTab = "bunny";
+var defaltShape = "tetrahedron";
+var currentTab = defaltShape;
 
 function render(gl,scene,timestamp,previousTimestamp) {
 
@@ -277,7 +278,7 @@ function loadMesh(filename) {
 }
 
 $(document).ready(function() {
-  loadModel('bunny', 0);
+  loadModel(defaltShape, 0);
 });
 
 function startMove() {
@@ -303,6 +304,7 @@ function caculate(string) {
 	var vertices = [];
 	var edges = [];
 	var hedges = [];
+  var halfEdges = {};
 	var v = e = f = X = 0;
 	for ( var i = 0 ; i < lines.length ; i++ ) {
     	var parts = lines[i].trimRight().split(' ');
@@ -325,48 +327,80 @@ function caculate(string) {
 		        case 'f': {
 		        	f++;
 	        		var f1 = parts[1].split('/');
-	        		var f2 = parts[2].split('/');
-	        		var f3 = parts[3].split('/');
-	        		var tempEdge = [];
+              var f2 = parts[2].split('/');
+              var f3 = parts[3].split('/');
+              var v1 = parseInt(parts[1].split('/'));
+	        		var v2 = parseInt(parts[2].split('/'));
+	        		var v3 = parseInt(parts[3].split('/'));
 	        		
-	        		tempEdge.push(parseInt(f1[0]));
-	        		tempEdge.push(parseInt(f2[0]));
-	        		hedges.push(tempEdge);
-	        		
-	        		tempEdge = [];
-	        		tempEdge.push(parseInt(f2[0]));
-	        		tempEdge.push(parseInt(f3[0]));
-	        		hedges.push(tempEdge);
-	        		
-	        		tempEdge = [];
-	        		tempEdge.push(parseInt(f3[0]));
-	        		tempEdge.push(parseInt(f1[0]));
-	        		hedges.push(tempEdge);
+              var tempEdge = [];
+	        		tempEdge.push(v1);
+	        		tempEdge.push(v2);
+              halfEdges[v1 + '-' + v2] = new HalfEdge();
+              halfEdges[v1 + '-' + v2].setVertex(positions[v1-1]);
+              halfEdges[v1 + '-' + v2].setEdge(tempEdge);
 
-	        		// edges = remove_duplicates(hedges);
+              tempEdge = [];
+              tempEdge.push(v2);
+              tempEdge.push(v3);
+              halfEdges[v2 + '-' + v3] = new HalfEdge();
+              halfEdges[v2 + '-' + v3].setVertex(positions[v2-1]);
+              halfEdges[v2 + '-' + v3].setEdge(tempEdge);
 
+              tempEdge = [];
+              tempEdge.push(v3);
+              tempEdge.push(v1);
+              halfEdges[v3 + '-' + v1] = new HalfEdge();
+              halfEdges[v3 + '-' + v1].setVertex(positions[v3-1]);
+              halfEdges[v3 + '-' + v1].setEdge(tempEdge);
 
-	        		// Array.prototype.push.apply(
-	        		//   vertices, positions[parseInt(f1[0]) - 1]);
-	        		// Array.prototype.push.apply(
-	        		//   vertices, positions[parseInt(f2[0]) - 1]);
-	        		// Array.prototype.push.apply(
-	        		//   vertices, positions[parseInt(f3[0]) - 1]);
+              halfEdges[v1 + '-' + v2].setNextHalfEdge(halfEdges[v2 + '-' + v3]);
+              halfEdges[v2 + '-' + v3].setNextHalfEdge(halfEdges[v3 + '-' + v1]);
+              halfEdges[v3 + '-' + v1].setNextHalfEdge(halfEdges[v1 + '-' + v2]);
 	        		break;
 		        }
       		}
     	}
   	}
-  	v = positions.length;
-  	e = hedges.length / 2;
-  	var g = genus;
-	$('#v').html(v);
-	$('#e').html(e);
-	$('#f').html(f);
-	$('#X').html(v+f-e);
-	$('#g').html(g);
-	$('#EN').html(2 - 2 * g);
-  	console.log(hedges);
+
+    v = positions.length;
+    e = f * 3 / 2;
+
+
+    for (const heID in halfEdges) {
+      let he = halfEdges[heID];
+      halfEdges[heID].setFlipHalfEdge(halfEdges[he.edge[1] + '-' + he.edge[0]]);
+    }
+    
+    var totalGaussianCurvature = 0;
+    var ave = 0;
+    // var testCount = 1;
+    for (const heID in halfEdges) {
+      let he = halfEdges[heID];
+      let allHe = halfEdges[heID].getAllHe();
+      ave = allHe.length;
+      // console.log();
+      
+      totalGaussianCurvature += he.getGaussianCurvature();
+      // if (testCount <= 0) {
+      //   break;
+      // }
+      // console.log(halfEdges[heID].getAngle());
+      // console.log(halfEdges[heID].getGaussianCurvature());
+      // testCount --;
+    }
+    console.log('K=' + (totalGaussianCurvature/ave));
+    var X = v+f-e;
+    console.log('2pi*X=' + (2*Math.PI*X));
+
+    var g = genus;
+	  $('#v').html(v);
+	  $('#e').html(e);
+	  $('#f').html(f);
+	  $('#X').html(v+f-e);
+	  $('#g').html(g);
+	  $('#EN').html(2 - 2 * g);
+  	console.log('Caculated!');
 }
 
 function loadModel(modelName, modelGenus) {
