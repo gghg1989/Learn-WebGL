@@ -1,8 +1,7 @@
-// var modelSrc = "tetrahedron.obj";
-var modelSrc = "donut.obj";
 var translationTrigger = false;
 var scaleRate = 1;
 var genus = 0;
+var currentTab = "bunny";
 
 function render(gl,scene,timestamp,previousTimestamp) {
 
@@ -373,4 +372,5 @@ function caculate(string) {
 function loadModel(modelName, modelGenus) {
 	loadMesh(modelName+".obj");
 	genus = modelGenus;
+	$('#'+modelName).addClass("active").toggle().animate();
 }
