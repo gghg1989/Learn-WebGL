@@ -255,8 +255,7 @@ function loadMeshData(string) {
       }
     }
   }
-  console.log(
-    "Loaded mesh with " + (vertices.length / 6) + " vertices");
+  // console.log("Loaded mesh with " + (vertices.length / 6) + " vertices");
   return {
     primitiveType: 'TRIANGLES',
     vertices: new Float32Array(vertices),
@@ -389,18 +388,22 @@ function caculate(string) {
       // console.log(halfEdges[heID].getGaussianCurvature());
       // testCount --;
     }
-    console.log('K=' + (totalGaussianCurvature/ave));
-    var X = v+f-e;
-    console.log('2pi*X=' + (2*Math.PI*X));
+    // console.log('K=' + (totalGaussianCurvature/ave));
+    var Kv = totalGaussianCurvature/ave;
+    $('#Kv').html(Kv);
+    // var X = v+f-e;
+    // console.log('2pi*X=' + (2*Math.PI*X));
+    var Kx = 2*Math.PI*(v+f-e);
+	  $('#2piX').html(Kx);
 
     var g = genus;
-	  $('#v').html(v);
+    $('#v').html(v);
 	  $('#e').html(e);
 	  $('#f').html(f);
 	  $('#X').html(v+f-e);
 	  $('#g').html(g);
 	  $('#EN').html(2 - 2 * g);
-  	console.log('Caculated!');
+  	// console.log('Caculated!');
 }
 
 function loadModel(modelName, modelGenus) {

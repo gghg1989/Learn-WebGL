@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Mesh Features</title>
+    <title>Gauss-Bonnet Theorem</title>
     <script type="x-shader/x-vertex" id="vertex-shader">
       precision mediump float;
    
@@ -101,6 +101,13 @@
           <label>f=</label><span id="f"></span> |
           <label>X=v+f-e=</label><span id="X"></span>
         </div>
+        <div>
+          <label>Kv=</label><span id="Kv"></span> | 
+          <label>2πX=</label><span id="2piX"></span>
+        </div>
+        <div>
+          (Since scale of model's triangles and multi-times decimal caculation, deviation may occured.)
+        </div>
         <div class="input-group mb-2">
           <span style="width: 30%" >
             <label for="light-x">Light X</label>
@@ -122,11 +129,11 @@
           </span>
           <span style="width: 30%">
             <lable for="rotate-y">Rotate Y</lable>
-            <input type="range" class="form-control-range" name="rotate-y" id="rotate-y" min="0" max="10" value="5">
+            <input type="range" class="form-control-range" name="rotate-y" id="rotate-y" min="0" max="10" value="6">
           </span>
           <span style="width: 30%">
             <label for="rotate-z">Rotate Z</label>
-            <input type="range" class="form-control-range" name="rotate-z" id="rotate-z" min="0" max="10" value="5">
+            <input type="range" class="form-control-range" name="rotate-z" id="rotate-z" min="0" max="10" value="6">
           </span>
         </div>
       </div>
