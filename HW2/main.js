@@ -372,5 +372,7 @@ function caculate(string) {
 function loadModel(modelName, modelGenus) {
 	loadMesh(modelName+".obj");
 	genus = modelGenus;
-	$('#'+modelName).addClass("active").toggle().animate();
+  $('#'+currentTab).removeClass("active"); 
+  currentTab = modelName;
+	$('#'+modelName).addClass("active"); 
 }
