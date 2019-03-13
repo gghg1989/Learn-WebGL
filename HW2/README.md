@@ -22,6 +22,6 @@ To view project result via any modern web browsers. Type in URL below to view re
 	* [http://localhost:8080/texture.html](http://localhost:8080/texture.html)
 
 ## Reference
-[1] [glMatrix Document](http://glmatrix.net/docs/module-glMatrix.html)
-[2] [Mathematics Genus Wiki](https://en.wikipedia.org/wiki/Genus_(mathematics))
-[3] [Half-Edge Mesh Data Structure](https://github.com/YCAMInterlab/mda.js/)
+* [1] [glMatrix Document](http://glmatrix.net/docs/module-glMatrix.html)
+* [2] [Mathematics Genus Wiki](https://en.wikipedia.org/wiki/Genus_(mathematics))
+* [3] [Half-Edge Mesh Data Structure](https://github.com/YCAMInterlab/mda.js/)
