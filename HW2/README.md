@@ -4,22 +4,26 @@ Yuzhou Feng
 ## How to run the program
 
 ### Install http server
+If you have nodejs installed on your computer, please run:
 ```bash
 npm install http-server -g
 ```
+If you have python installed on your computer, you should have SimpleHTTPServer built-in with your python, jump to step 2.
+
 ### Start Server
-In command line, first get into project directory, then run http server as below:
+Get into project directory in command line. 
+For nodejs http server, run the command below, the program will run on 8080 port by default:
 ```bash
 http-server
 ```
-The program will run on 8080 port by default.
+For python SimpleHTTPServer, run:
+```bash
+python -m SimpleHTTPServer 8080
+```
 
 ### Browse Program
 To view project result via any modern web browsers. Type in URL below to view relevant program.
-* Transformations(rotation, scaling, translation) and lighting
-	* [http://localhost:8080/transformations.html](http://localhost:8080/transformations.html)
-* Model texture
-	* [http://localhost:8080/texture.html](http://localhost:8080/texture.html)
+* [http://localhost:8080/](http://localhost:8080/)
 
 ## Reference
 * [1] [glMatrix Document](http://glmatrix.net/docs/module-glMatrix.html)
